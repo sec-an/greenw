@@ -1,0 +1,38 @@
+name: greenw
+
+on:
+  push:
+    branches:
+      - main
+      
+  schedule:
+  - cron: "0 6,11,14,20,22 * * *"
+
+jobs:
+  greenw:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+         persist-credentials: false
+         fetch-depth: 0
+
+      - name: Modify
+        run: |
+          d=`date '+%Y/%m/%dT%H:%M:%SZ'`
+          echo $d > LATEST
+          
+      - name: Commit
+        run: |
+          git config --local user.email "sec_an@foxmail.com"
+          git config --local user.name "sec-an"
+          git add -A
+          
+          git commit -m "Update"
+          
+      - name: Push
+        uses: ad-m/github-push-action@master
+        with:
+          force: true
+          directory: "."
+          github_token: ${{ secrets.GITHUB_TOKEN }}
